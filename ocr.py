@@ -3,6 +3,8 @@ import cv2
 import imutils
 from tensorflow.keras.models import load_model
 from imutils.contours import sort_contours
+import io, base64
+from PIL import Image
 
 def find_contours(img):
     conts = cv2.findContours(img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -52,15 +54,21 @@ def process_box(gray, x, y, w, h, characters):
     characters.append((normalized, (x, y, w, h)))
 
 
-def get_chars(img_url):
+def base64_to_png(img_url):
+    base64_str = img_url[22:len(img_url)]
+    img = Image.open(io.BytesIO(base64.decodebytes(bytes(base64_str, "utf-8"))))
+    img.save('my-image.png')
+
+def get_chars (img_url):
+    base64_to_png(img_url)
     network = load_model('network')
-    # convertir a png?
-    img = cv2.imread('2.png')
+    network.summary()
+    img = cv2.imread('my-image.png')
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     blur = cv2.GaussianBlur(gray, (3, 3), 0)
     adaptive = cv2.adaptiveThreshold(blur, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 9)
     invertion = 255 - adaptive
-    dilation = cv2.dilate(invertion, np.ones((3, 3)))
+    dilation = cv2.dilate(invertion, np.ones((1, 1)))
     edges = cv2.Canny(dilation, 40, 150)
     dilation = cv2.dilate(edges, np.ones((3, 3)))
     conts = find_contours(dilation.copy())

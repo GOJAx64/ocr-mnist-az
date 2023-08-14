@@ -56,7 +56,7 @@ if __name__ == '__main__':
     network = load_model('network')
     # network.summary()
 
-    img = cv2.imread('3.png')
+    img = cv2.imread('7.png')
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     blur = cv2.GaussianBlur(gray, (3, 3), 0)
     adaptive = cv2.adaptiveThreshold(blur, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 9)
