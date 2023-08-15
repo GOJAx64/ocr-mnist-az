@@ -68,9 +68,9 @@ def get_chars (img_url):
     blur = cv2.GaussianBlur(gray, (3, 3), 0)
     adaptive = cv2.adaptiveThreshold(blur, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 9)
     invertion = 255 - adaptive
-    dilation = cv2.dilate(invertion, np.ones((1, 1)))
+    dilation = cv2.dilate(invertion, np.ones((2,2)))
     edges = cv2.Canny(dilation, 40, 150)
-    dilation = cv2.dilate(edges, np.ones((3, 3)))
+    dilation = cv2.dilate(edges, np.ones((2, 2)))
     conts = find_contours(dilation.copy())
 
     min_w, max_w = 4, 160
@@ -103,12 +103,10 @@ def get_chars (img_url):
     characters_list = [l for l in characters_list]
     predictions = network.predict(pixels)
 
-    img_copy = img.copy()
-    list_char = []
+    text = ''
     for (prediction, (x, y, w, h)) in zip(predictions, boxes):
         i = np.argmax(prediction)
-        prediction[i]
         character = characters_list[i]
-        list_char.append(character)
+        text = text + character
 
-    return list_char
+    return text
