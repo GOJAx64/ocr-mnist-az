@@ -1,11 +1,13 @@
 from flask import Flask, jsonify
 from flask_pymongo import PyMongo
 from bson.objectid import ObjectId
+from flask_cors import CORS
 from interface import get_chars
 
 app = Flask(__name__)
 app.secret_key = 'myawesomesecretkey'
 app.config['MONGO_URI'] = 'mongodb+srv://chat_user:chat_user123@uptask-mern.sb1cxkm.mongodb.net/virtual-classrooms-images'
+CORS(app)
 mongo = PyMongo(app)
 
 
