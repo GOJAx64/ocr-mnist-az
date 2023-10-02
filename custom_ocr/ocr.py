@@ -63,14 +63,14 @@ def get_chars (img_url):
     base64_to_png(img_url)
     network = load_model('network')
     network.summary()
-    img = cv2.imread('my-image.png')
+    img = cv2.imread('../my-image.png')
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     blur = cv2.GaussianBlur(gray, (3, 3), 0)
     adaptive = cv2.adaptiveThreshold(blur, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 9)
     invertion = 255 - adaptive
-    dilation = cv2.dilate(invertion, np.ones((2,2)))
+    dilation = cv2.dilate(invertion, np.ones((1, 1)))
     edges = cv2.Canny(dilation, 40, 150)
-    dilation = cv2.dilate(edges, np.ones((2, 2)))
+    dilation = cv2.dilate(edges, np.ones((1, 1)))
     conts = find_contours(dilation.copy())
 
     min_w, max_w = 4, 160

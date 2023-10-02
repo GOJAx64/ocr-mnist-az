@@ -4,7 +4,10 @@ import imutils
 from tensorflow.keras.models import load_model
 from imutils.contours import sort_contours
 
-
+'''
+El proceso para obtener las predicciones se base en convertir la imagen en escala de grises, detectar los bordes,
+invertir los colores entre blancos y negros, dilatar los bordes, separar los caracteres 
+'''
 def find_contours(img):
     conts = cv2.findContours(img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     conts = imutils.grab_contours(conts)
@@ -53,24 +56,24 @@ def process_box(gray, x, y, w, h):
 
 
 if __name__ == '__main__':
-    network = load_model('network')
+    network = load_model('custom_ocr/network')  # cargamos el modelo
     # network.summary()
 
-    img = cv2.imread('my-image.png')
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    img = cv2.imread('custom_ocr/test_images/3.png')  # cargamos la images a testear
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)  # convertimos a escala de grises
     blur = cv2.GaussianBlur(gray, (3, 3), 0)
-    adaptive = cv2.adaptiveThreshold(blur, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 9)
-    invertion = 255 - adaptive
-    dilation = cv2.dilate(invertion, np.ones((3, 3)))
+    adaptive = cv2.adaptiveThreshold(blur, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 9)  # Detectamos los bordes
+    invertion = 255 - adaptive # invertimos los colores entre blancos y negros
+    dilation = cv2.dilate(invertion, np.ones((2, 2)))  # dilatamos los bordes
     edges = cv2.Canny(dilation, 40, 150)
-    dilation = cv2.dilate(edges, np.ones((3, 3)))
-    conts = find_contours(dilation.copy())
+    dilation = cv2.dilate(edges, np.ones((2, 2)))
+    conts = find_contours(dilation.copy())  # Encontramos los contornos
 
     min_w, max_w = 4, 160
     min_h, max_h = 14, 140
     img_copy = img.copy()
 
-    for c in conts:
+    '''for c in conts:
         (x, y, w, h) = cv2.boundingRect(c)
         if (w >= min_w and w <= max_w) and (h >= min_h and h <= max_h):
             roi = gray[y:y + h, x:x + w]
@@ -80,10 +83,10 @@ if __name__ == '__main__':
     (x, y, w, h) = cv2.boundingRect(conts[6])
     test_img = thresholding(gray[y:y + h, x:x + w])
     (h, w) = test_img.shape
-    test_img2 = resize_img(test_img, w, h)
+    test_img2 = resize_img(test_img, w, h)'''
 
     characters = []
-
+    # Separamos los caracteres basandose en los contornos que se encontraron
     for c in conts:
         (x, y, w, h) = cv2.boundingRect(c)
         if (w >= min_w and w <= max_w) and (h >= min_h and h <= max_h):

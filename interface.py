@@ -12,7 +12,7 @@ def base64_to_png(img_url):
 
 
 def get_chars(img_url):
-    languages_list = ['en', 'es']
+    languages_list = ['es']
     text = ''
     base64_to_png(img_url)
     img = cv2.imread('my-image.png')
